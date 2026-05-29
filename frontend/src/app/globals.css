@@ -3,46 +3,45 @@
 @tailwind utilities;
 
 :root {
-  --brand: #4f46e5;
+  --brand: #6366F1;
   --brand-light: #818cf8;
 }
 
 * { box-sizing: border-box; }
 
 body {
-  background: #030712;
-  color: #f9fafb;
+  @apply bg-hire-bg text-hire-text-main antialiased;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
 
-/* Stage badge colors */
-.stage-APPLIED    { @apply bg-gray-700 text-gray-200; }
-.stage-SCREENING  { @apply bg-blue-900 text-blue-200; }
-.stage-SCREENED_OUT { @apply bg-red-900 text-red-200; }
-.stage-ASSESSMENT { @apply bg-yellow-900 text-yellow-200; }
-.stage-EVALUATING { @apply bg-orange-900 text-orange-200; }
-.stage-INTERVIEW  { @apply bg-purple-900 text-purple-200; }
-.stage-HIRED      { @apply bg-green-900 text-green-200; }
-.stage-REJECTED   { @apply bg-red-900 text-red-200; }
+/* Stage badge colors - Semantic dark mode optimized */
+.stage-APPLIED    { @apply bg-slate-500/10 text-slate-400 border border-slate-500/20; }
+.stage-SCREENING  { @apply bg-blue-500/10 text-blue-400 border border-blue-500/20; }
+.stage-SCREENED_OUT { @apply bg-red-500/10 text-red-400 border border-red-500/20; }
+.stage-ASSESSMENT { @apply bg-amber-500/10 text-amber-400 border border-amber-500/20; }
+.stage-EVALUATING { @apply bg-orange-500/10 text-orange-400 border border-orange-500/20; }
+.stage-INTERVIEW  { @apply bg-blue-500/10 text-blue-400 border border-blue-500/20; }
+.stage-HIRED      { @apply bg-emerald-500/10 text-emerald-400 border border-emerald-500/20; }
+.stage-REJECTED   { @apply bg-red-500/10 text-red-400 border border-red-500/20; }
 
 @layer components {
   .btn-primary {
-    @apply bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-150;
+    @apply bg-hire-primary hover:bg-hire-primary-hover text-white font-medium px-4 py-2 rounded-lg transition-colors duration-150;
   }
   .btn-secondary {
-    @apply bg-gray-800 hover:bg-gray-700 text-gray-200 font-medium px-4 py-2 rounded-lg transition-colors duration-150 border border-gray-700;
+    @apply text-hire-text-muted hover:text-hire-text-main hover:bg-hire-surface-hover font-medium px-4 py-2 rounded-lg transition-colors duration-150;
   }
   .card {
-    @apply bg-gray-900 border border-gray-800 rounded-xl p-6;
+    @apply bg-hire-surface border border-hire-border rounded-xl p-6;
   }
   .input {
-    @apply bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-full;
+    @apply bg-hire-bg border border-hire-border rounded-lg px-3 py-2 text-hire-text-main placeholder-hire-text-muted focus:outline-none focus:ring-2 focus:ring-hire-primary/50 focus:border-hire-primary w-full;
   }
   .label {
-    @apply block text-sm font-medium text-gray-300 mb-1;
+    @apply block text-sm font-medium text-hire-text-main mb-1;
   }
 }

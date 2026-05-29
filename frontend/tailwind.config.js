@@ -8,6 +8,14 @@ module.exports = {
         mono: ['var(--font-mono)', 'monospace'],
       },
       colors: {
+        'hire-bg': '#0F172A',
+        'hire-surface': '#1E293B',
+        'hire-surface-hover': '#334155',
+        'hire-primary': '#6366F1',
+        'hire-primary-hover': '#4F46E5',
+        'hire-text-main': '#F8FAFC',
+        'hire-text-muted': '#94A3B8',
+        'hire-border': '#334155',
         brand: {
           50: '#f0f4ff',
           100: '#e0e9ff',

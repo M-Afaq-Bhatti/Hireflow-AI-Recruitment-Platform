@@ -37,14 +37,14 @@ export default function PublicJobsPage() {
     <>
       <PublicNavbar />
       
-      <div className="min-h-screen bg-gray-950 pt-12 pb-12">
+      <div className="min-h-screen bg-hire-bg pt-12 pb-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-12">
-            <h1 className="text-4xl font-bold text-white mb-3">
+            <h1 className="text-4xl font-bold text-hire-text-main mb-3">
               Join Our Team
             </h1>
-            <p className="text-xl text-gray-400 mb-8">
+            <p className="text-xl text-hire-text-muted mb-8">
               Explore open positions and apply now
             </p>
 
@@ -55,10 +55,10 @@ export default function PublicJobsPage() {
                 placeholder="Search by job title, department, or location..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-6 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500"
+                className="w-full px-6 py-3 bg-hire-surface border border-hire-border rounded-lg text-hire-text-main placeholder-hire-text-muted focus:outline-none focus:border-hire-primary"
               />
               <svg
-                className="absolute right-4 top-3.5 w-5 h-5 text-gray-500"
+                className="absolute right-4 top-3.5 w-5 h-5 text-hire-text-muted"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -76,18 +76,18 @@ export default function PublicJobsPage() {
           {/* Loading State */}
           {loading && (
             <div className="text-center py-12">
-              <div className="text-gray-400">Loading open positions...</div>
+              <div className="text-hire-text-muted">Loading open positions...</div>
             </div>
           )}
 
           {/* Empty State */}
           {!loading && jobs.length === 0 && (
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-12 text-center">
+            <div className="bg-hire-surface border border-hire-border rounded-lg p-12 text-center">
               <div className="text-5xl mb-4">🔍</div>
-              <h2 className="text-xl font-semibold text-white mb-2">
+              <h2 className="text-xl font-semibold text-hire-text-main mb-2">
                 No open positions yet
               </h2>
-              <p className="text-gray-400">
+              <p className="text-hire-text-muted">
                 Check back soon for exciting opportunities!
               </p>
             </div>
@@ -95,17 +95,17 @@ export default function PublicJobsPage() {
 
           {/* No Search Results */}
           {!loading && jobs.length > 0 && filteredJobs.length === 0 && (
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-12 text-center">
+            <div className="bg-hire-surface border border-hire-border rounded-lg p-12 text-center">
               <div className="text-5xl mb-4">📭</div>
-              <h2 className="text-xl font-semibold text-white mb-2">
+              <h2 className="text-xl font-semibold text-hire-text-main mb-2">
                 No jobs match your search
               </h2>
-              <p className="text-gray-400 mb-4">
+              <p className="text-hire-text-muted mb-4">
                 Try adjusting your search terms
               </p>
               <button
                 onClick={() => setSearchTerm('')}
-                className="text-indigo-400 hover:text-indigo-300"
+                className="text-hire-primary hover:text-hire-primary-hover"
               >
                 Clear search
               </button>
@@ -118,17 +118,17 @@ export default function PublicJobsPage() {
               {filteredJobs.map((job) => (
                 <div
                   key={job.id}
-                  className="group bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-indigo-500 hover:bg-gray-900/80 transition-all"
+                  className="group bg-hire-surface border border-hire-border rounded-lg p-6 hover:border-hire-primary hover:bg-hire-surface/80 transition-all"
                 >
                   <div className="flex items-start justify-between gap-4">
                     {/* Job Info */}
                     <div className="flex-1">
-                      <h2 className="text-xl font-semibold text-white group-hover:text-indigo-300 transition-colors mb-2">
+                      <h2 className="text-xl font-semibold text-hire-text-main group-hover:text-hire-primary transition-colors mb-2">
                         {job.title}
                       </h2>
 
                       {/* Meta */}
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-400 mb-4">
+                      <div className="flex flex-wrap gap-4 text-sm text-hire-text-muted mb-4">
                         {job.department && (
                           <div className="flex items-center gap-1">
                             <span>📁</span>
@@ -150,14 +150,14 @@ export default function PublicJobsPage() {
                       </div>
 
                       {/* Description */}
-                      <p className="text-gray-400 line-clamp-2 mb-4">
+                      <p className="text-hire-text-muted line-clamp-2 mb-4">
                         {job.description}
                       </p>
 
                       {/* Requirements (if available) */}
                       {job.requirements && (
                         <div className="mb-4">
-                          <p className="text-sm font-medium text-gray-300 mb-2">
+                          <p className="text-sm font-medium text-hire-text-main mb-2">
                             Key Requirements:
                           </p>
                           <div className="flex flex-wrap gap-2">
@@ -167,7 +167,7 @@ export default function PublicJobsPage() {
                               .map((req, idx) => (
                                 <span
                                   key={idx}
-                                  className="px-2 py-1 text-xs bg-indigo-900/30 text-indigo-300 rounded"
+                                  className="px-2 py-1 text-xs bg-hire-primary/20 text-hire-primary rounded"
                                 >
                                   {req.trim()}
                                 </span>
@@ -180,7 +180,7 @@ export default function PublicJobsPage() {
                     {/* Apply Button */}
                     <Link
                       href={`/apply/${job.id}`}
-                      className="flex-shrink-0 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors whitespace-nowrap"
+                      className="flex-shrink-0 px-6 py-3 bg-hire-primary hover:bg-hire-primary-hover text-white font-medium rounded-lg transition-colors whitespace-nowrap"
                     >
                       Apply Now →
                     </Link>
@@ -192,12 +192,13 @@ export default function PublicJobsPage() {
 
           {/* Stats */}
           {!loading && jobs.length > 0 && (
-            <div className="mt-12 pt-8 border-t border-gray-800 text-center">
-              <p className="text-gray-400">
+            <div className="mt-12 pt-8 border-t border-hire-border text-center">
+              <p className="text-hire-text-muted">
                 Showing {filteredJobs.length} of {jobs.length} open position
                 {jobs.length !== 1 ? 's' : ''}
               </p>
             </div>
+          )}
           )}
         </div>
       </div>

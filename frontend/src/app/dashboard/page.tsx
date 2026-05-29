@@ -30,11 +30,11 @@ function StageBadge({ stage }: { stage: string }) {
 function CandidateCard({ candidate }: { candidate: Candidate }) {
   return (
     <Link href={`/candidates/${candidate.id}`}>
-      <div className="bg-gray-800 border border-gray-700 rounded-lg p-3 hover:border-indigo-500 transition-colors cursor-pointer group animate-slide-in">
+      <div className="bg-hire-surface border border-hire-border rounded-lg p-3 hover:border-hire-primary transition-colors cursor-pointer group animate-slide-in">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <div className="font-medium text-sm text-white group-hover:text-indigo-300 transition-colors">{candidate.name}</div>
-            <div className="text-xs text-gray-500 mt-0.5">{candidate.email}</div>
+            <div className="font-medium text-sm text-hire-text-main group-hover:text-hire-primary transition-colors">{candidate.name}</div>
+            <div className="text-xs text-hire-text-muted mt-0.5">{candidate.email}</div>
           </div>
           {candidate.screeningScore != null && (
             <div className={`text-xs font-bold px-1.5 py-0.5 rounded ${candidate.screeningScore >= 70 ? 'text-green-400 bg-green-900/40' : candidate.screeningScore >= 50 ? 'text-yellow-400 bg-yellow-900/40' : 'text-red-400 bg-red-900/40'}`}>
@@ -45,7 +45,7 @@ function CandidateCard({ candidate }: { candidate: Candidate }) {
         <div className="mt-2">
           <StageBadge stage={candidate.stage} />
         </div>
-        <div className="text-xs text-gray-600 mt-2">{candidate.job?.title}</div>
+        <div className="text-xs text-hire-text-muted mt-2">{candidate.job?.title}</div>
       </div>
     </Link>
   );
@@ -89,8 +89,8 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Pipeline Dashboard</h1>
-          <p className="text-gray-400 text-sm mt-1">Live candidate tracking</p>
+          <h1 className="text-2xl font-bold text-hire-text-main">Pipeline Dashboard</h1>
+          <p className="text-hire-text-muted text-sm mt-1">Live candidate tracking</p>
         </div>
         <Link href="/jobs/new" className="btn-primary">+ Post a Job</Link>
       </div>
@@ -104,28 +104,28 @@ export default function DashboardPage() {
           { label: 'Hired', value: stats.byStage?.HIRED || 0 },
         ].map(s => (
           <div key={s.label} className="card">
-            <div className="text-3xl font-bold text-white">{s.value}</div>
-            <div className="text-sm text-gray-400 mt-1">{s.label}</div>
+            <div className="text-3xl font-bold text-hire-text-main">{s.value}</div>
+            <div className="text-sm text-hire-text-muted mt-1">{s.label}</div>
           </div>
         ))}
       </div>
 
       {/* Kanban */}
       {loading ? (
-        <div className="text-center text-gray-500 py-16">Loading pipeline…</div>
+        <div className="text-center text-hire-text-muted py-16">Loading pipeline…</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {COLUMNS.map(col => {
             const cards = getColumn(col.stage);
             return (
-              <div key={col.stage} className={`bg-gray-900 border-t-2 ${col.color} rounded-xl`}>
-                <div className="p-3 border-b border-gray-800 flex items-center justify-between">
-                  <span className="font-medium text-sm text-gray-200">{col.label}</span>
-                  <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">{cards.length}</span>
+              <div key={col.stage} className={`bg-hire-surface/50 border-t-2 ${col.color} rounded-xl`}>
+                <div className="p-3 border-b border-hire-border flex items-center justify-between">
+                  <span className="font-medium text-sm text-hire-text-main">{col.label}</span>
+                  <span className="text-xs bg-hire-surface text-hire-text-muted px-2 py-0.5 rounded-full">{cards.length}</span>
                 </div>
                 <div className="p-3 space-y-2 min-h-32">
                   {cards.length === 0
-                    ? <div className="text-xs text-gray-600 text-center py-4">No candidates</div>
+                    ? <div className="text-xs text-hire-text-muted text-center py-4">No candidates</div>
                     : cards.map(c => <CandidateCard key={c.id} candidate={c} />)
                   }
                 </div>

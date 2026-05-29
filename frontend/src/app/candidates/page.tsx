@@ -27,7 +27,7 @@ export default function CandidatesPage() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="text-2xl font-bold text-white">All Candidates</h1>
+        <h1 className="text-2xl font-bold text-hire-text-main">All Candidates</h1>
         <select className="input w-auto text-sm"
           value={filter} onChange={e => setFilter(e.target.value)}>
           <option value="">All Stages</option>
@@ -35,14 +35,14 @@ export default function CandidatesPage() {
         </select>
       </div>
 
-      {loading ? <div className="text-gray-500">Loading…</div> : (
+      {loading ? <div className="text-hire-text-muted">Loading…</div> : (
         <div className="card p-0 overflow-hidden">
           {filtered.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">No candidates found.</div>
+            <div className="text-center py-12 text-hire-text-muted">No candidates found.</div>
           ) : (
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-gray-500 text-xs border-b border-gray-800">
+                <tr className="text-hire-text-muted text-xs border-b border-hire-border">
                   <th className="text-left px-5 py-3">Name</th>
                   <th className="text-left px-5 py-3">Email</th>
                   <th className="text-left px-5 py-3">Job</th>
@@ -54,10 +54,10 @@ export default function CandidatesPage() {
               </thead>
               <tbody>
                 {filtered.map(c => (
-                  <tr key={c.id} className="border-b border-gray-800/50 hover:bg-gray-800/50 transition-colors">
-                    <td className="px-5 py-3 font-medium text-white">{c.name}</td>
-                    <td className="px-5 py-3 text-gray-400 text-xs">{c.email}</td>
-                    <td className="px-5 py-3 text-gray-400 text-xs">{(c as any).job?.title || '—'}</td>
+                  <tr key={c.id} className="border-b border-hire-border/50 hover:bg-hire-surface-hover transition-colors">
+                    <td className="px-5 py-3 font-medium text-hire-text-main">{c.name}</td>
+                    <td className="px-5 py-3 text-hire-text-muted text-xs">{c.email}</td>
+                    <td className="px-5 py-3 text-hire-text-muted text-xs">{(c as any).job?.title || '—'}</td>
                     <td className="px-5 py-3">
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STAGE_COLOR[c.stage]}`}>
                         {c.stage.replace('_',' ')}
@@ -66,11 +66,11 @@ export default function CandidatesPage() {
                     <td className="px-5 py-3">
                       {c.screeningScore != null
                         ? <span className={`font-bold ${c.screeningScore >= 70 ? 'text-green-400' : c.screeningScore >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>{Math.round(c.screeningScore)}</span>
-                        : <span className="text-gray-600">—</span>}
+                        : <span className="text-hire-text-muted">—</span>}
                     </td>
-                    <td className="px-5 py-3 text-gray-500 text-xs">{new Date(c.createdAt).toLocaleDateString()}</td>
+                    <td className="px-5 py-3 text-hire-text-muted text-xs">{new Date(c.createdAt).toLocaleDateString()}</td>
                     <td className="px-5 py-3">
-                      <Link href={`/candidates/${c.id}`} className="text-indigo-400 hover:text-indigo-300 text-xs">View →</Link>
+                      <Link href={`/candidates/${c.id}`} className="text-hire-primary hover:text-hire-primary-hover text-xs">View →</Link>
                     </td>
                   </tr>
                 ))}

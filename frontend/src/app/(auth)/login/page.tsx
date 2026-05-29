@@ -24,11 +24,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-hire-bg flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="text-2xl font-bold text-white">HireFlow</Link>
-          <p className="text-gray-400 mt-2">Sign in to your dashboard</p>
+          <Link href="/" className="text-2xl font-bold text-hire-text-main">HireFlow</Link>
+          <p className="text-hire-text-muted mt-2">Sign in to your dashboard</p>
         </div>
         <form onSubmit={handleSubmit} className="card space-y-4">
           {error && <div className="bg-red-900/50 border border-red-700 rounded-lg px-4 py-3 text-red-300 text-sm">{error}</div>}
@@ -45,8 +45,8 @@ export default function LoginPage() {
           <button type="submit" disabled={loading} className="btn-primary w-full py-2.5 text-base">
             {loading ? 'Signing in…' : 'Sign In'}
           </button>
-          <p className="text-center text-sm text-gray-500">
-            No account? <Link href="/register" className="text-indigo-400 hover:text-indigo-300">Register your company</Link>
+          <p className="text-center text-sm text-hire-text-muted">
+            No account? <Link href="/register" className="text-hire-primary hover:text-hire-primary-hover">Register your company</Link>
           </p>
         </form>
       </div>

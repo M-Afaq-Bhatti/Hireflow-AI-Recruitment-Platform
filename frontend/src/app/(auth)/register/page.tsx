@@ -26,16 +26,16 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-hire-bg flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="text-2xl font-bold text-white">HireFlow</Link>
-          <p className="text-gray-400 mt-2">Register your company</p>
+          <Link href="/" className="text-2xl font-bold text-hire-text-main">HireFlow</Link>
+          <p className="text-hire-text-muted mt-2">Register your company</p>
         </div>
         <form onSubmit={handleSubmit} className="card space-y-4">
           {error && <div className="bg-red-900/50 border border-red-700 rounded-lg px-4 py-3 text-red-300 text-sm">{error}</div>}
-          <div className="border-b border-gray-800 pb-4">
-            <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Company Details</p>
+          <div className="border-b border-hire-border pb-4">
+            <p className="text-xs text-hire-text-muted uppercase tracking-wider mb-3">Company Details</p>
             <div className="space-y-3">
               <div>
                 <label className="label">Company Name</label>
@@ -48,7 +48,7 @@ export default function RegisterPage() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Admin Account</p>
+            <p className="text-xs text-hire-text-muted uppercase tracking-wider mb-3">Admin Account</p>
             <div className="space-y-3">
               <div>
                 <label className="label">Your Name</label>
@@ -67,8 +67,8 @@ export default function RegisterPage() {
           <button type="submit" disabled={loading} className="btn-primary w-full py-2.5 text-base">
             {loading ? 'Creating account…' : 'Create Account'}
           </button>
-          <p className="text-center text-sm text-gray-500">
-            Already registered? <Link href="/login" className="text-indigo-400 hover:text-indigo-300">Sign in</Link>
+          <p className="text-center text-sm text-hire-text-muted">
+            Already registered? <Link href="/login" className="text-hire-primary hover:text-hire-primary-hover">Sign in</Link>
           </p>
         </form>
       </div>

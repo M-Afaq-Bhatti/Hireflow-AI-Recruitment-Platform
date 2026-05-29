@@ -17,8 +17,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-gray-950 items-center justify-center">
-        <div className="text-gray-400">Loading...</div>
+      <div className="flex h-screen bg-hire-bg items-center justify-center">
+        <div className="text-hire-text-muted">Loading...</div>
       </div>
     );
   }
@@ -30,26 +30,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   ];
 
   return (
-    <div className="flex h-screen bg-gray-950 overflow-hidden">
+    <div className="flex h-screen bg-hire-bg overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-56 bg-gray-900 border-r border-gray-800 flex flex-col">
-        <div className="p-5 border-b border-gray-800">
-          <div className="text-lg font-bold text-white">HireFlow</div>
-          <div className="text-xs text-gray-500 mt-0.5 truncate">{companyName}</div>
+      <aside className="w-56 bg-hire-surface border-r border-hire-border flex flex-col">
+        <div className="p-5 border-b border-hire-border">
+          <div className="text-lg font-bold text-hire-text-main">HireFlow</div>
+          <div className="text-xs text-hire-text-muted mt-0.5 truncate">{companyName}</div>
         </div>
         <nav className="flex-1 p-3 space-y-1">
           {navItems.map(item => (
             <Link key={item.href} href={item.href}
               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                pathname === item.href ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                pathname === item.href ? 'bg-hire-primary text-white' : 'text-hire-text-muted hover:text-hire-text-main hover:bg-hire-surface-hover'
               }`}>
               <span>{item.icon}</span>{item.label}
             </Link>
           ))}
         </nav>
-        <div className="p-3 border-t border-gray-800">
-          <div className="px-3 py-2 text-sm text-gray-400 truncate">{user?.name}</div>
-          <button onClick={logout} className="w-full text-left px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-gray-800 rounded-lg transition-colors">
+        <div className="p-3 border-t border-hire-border">
+          <div className="px-3 py-2 text-sm text-hire-text-muted truncate">{user?.name}</div>
+          <button onClick={logout} className="w-full text-left px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-hire-surface-hover rounded-lg transition-colors">
             Sign Out
           </button>
         </div>

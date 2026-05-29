@@ -7,25 +7,25 @@ export default function Home() {
     <>
       <PublicNavbar />
       
-      <main className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-4">
+      <main className="min-h-screen bg-hire-bg flex flex-col items-center justify-center px-4">
         {/* Grid background */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(79,70,229,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(79,70,229,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(99,102,241,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
 
         <div className="relative z-10 text-center max-w-3xl mx-auto animate-fade-in">
           {/* Logo */}
-          <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-4 py-1.5 mb-8">
-            <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
-            <span className="text-indigo-300 text-sm font-medium">AI-Powered Recruitment</span>
+          <div className="inline-flex items-center gap-2 bg-hire-primary/10 border border-hire-primary/20 rounded-full px-4 py-1.5 mb-8">
+            <div className="w-2 h-2 rounded-full bg-hire-primary animate-pulse" />
+            <span className="text-hire-primary text-sm font-medium">AI-Powered Recruitment</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
+          <h1 className="text-5xl md:text-7xl font-bold text-hire-text-main mb-6 tracking-tight">
             Hire smarter.<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-hire-primary to-purple-400">
               3 minutes, not weeks.
             </span>
           </h1>
 
-          <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-hire-text-muted mb-12 max-w-2xl mx-auto leading-relaxed">
             HireFlow's 4-stage AI pipeline screens resumes, generates assessments, evaluates answers,
             and conducts voice interviews — completely autonomously.
           </p>
@@ -49,8 +49,8 @@ export default function Home() {
             ].map((step, i) => (
               <div key={i} className="card text-left">
                 <div className="text-2xl mb-2">{step.icon}</div>
-                <div className="text-sm font-semibold text-white">{step.title}</div>
-                <div className="text-xs text-gray-500 mt-1">{step.desc}</div>
+                <div className="text-sm font-semibold text-hire-text-main">{step.title}</div>
+                <div className="text-xs text-hire-text-muted mt-1">{step.desc}</div>
               </div>
             ))}
           </div>

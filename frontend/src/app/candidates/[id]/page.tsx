@@ -8,7 +8,7 @@ import type { Candidate } from '@/types';
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="card space-y-3">
-      <h3 className="font-semibold text-gray-200 text-sm uppercase tracking-wider">{title}</h3>
+      <h3 className="font-semibold text-hire-text-main text-sm uppercase tracking-wider">{title}</h3>
       {children}
     </div>
   );
@@ -20,10 +20,10 @@ function ScoreBar({ label, score, max = 100 }: { label: string; score: number; m
   return (
     <div>
       <div className="flex justify-between text-xs mb-1">
-        <span className="text-gray-400">{label}</span>
-        <span className="text-gray-300 font-medium">{Math.round(score)}/{max}</span>
+        <span className="text-hire-text-muted">{label}</span>
+        <span className="text-hire-text-main font-medium">{Math.round(score)}/{max}</span>
       </div>
-      <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-hire-surface rounded-full overflow-hidden">
         <div className={`h-full ${color} rounded-full transition-all`} style={{ width: `${pct}%` }} />
       </div>
     </div>
@@ -46,7 +46,7 @@ export default function CandidateDetailPage() {
     api.get(`/candidates/${id}`).then(r => setCandidate(r.data)).catch(console.error).finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div className="p-6 text-gray-500">Loading…</div>;
+  if (loading) return <div className="p-6 text-hire-text-muted">Loading…</div>;
   if (!candidate) return <div className="p-6 text-red-400">Candidate not found</div>;
 
   const screening = candidate.screeningData;
@@ -58,9 +58,9 @@ export default function CandidateDetailPage() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <Link href="/candidates" className="text-gray-400 hover:text-white text-sm">← Candidates</Link>
-          <h1 className="text-2xl font-bold text-white mt-1">{candidate.name}</h1>
-          <div className="flex gap-3 text-sm text-gray-400 mt-1">
+          <Link href="/candidates" className="text-hire-text-muted hover:text-hire-text-main text-sm">← Candidates</Link>
+          <h1 className="text-2xl font-bold text-hire-text-main mt-1">{candidate.name}</h1>
+          <div className="flex gap-3 text-sm text-hire-text-muted mt-1">
             <span>✉️ {candidate.email}</span>
             {candidate.phone && <span>📞 {candidate.phone}</span>}
           </div>
@@ -72,20 +72,20 @@ export default function CandidateDetailPage() {
 
       {/* Job */}
       <Section title="Applied For">
-        <div className="text-gray-300">{(candidate as any).job?.title || 'Unknown job'}</div>
-        <div className="text-xs text-gray-500">Applied {new Date(candidate.createdAt).toLocaleDateString()}</div>
+        <div className="text-hire-text-main">{(candidate as any).job?.title || 'Unknown job'}</div>
+        <div className="text-xs text-hire-text-muted">Applied {new Date(candidate.createdAt).toLocaleDateString()}</div>
       </Section>
 
       {/* Screening */}
       {screening && (
         <Section title="Agent 1 — Resume Screening">
           <ScoreBar label="Screening Score" score={candidate.screeningScore || 0} />
-          <p className="text-sm text-gray-400">{screening.reasoning}</p>
+          <p className="text-sm text-hire-text-muted">{screening.reasoning}</p>
           {screening.strengths?.length > 0 && (
             <div>
               <div className="text-xs text-green-400 font-medium mb-1">Strengths</div>
               <ul className="space-y-1">{screening.strengths.map((s: string, i: number) => (
-                <li key={i} className="text-sm text-gray-400 flex gap-2"><span className="text-green-500">✓</span>{s}</li>
+                <li key={i} className="text-sm text-hire-text-muted flex gap-2"><span className="text-green-500">✓</span>{s}</li>
               ))}</ul>
             </div>
           )}
@@ -93,7 +93,7 @@ export default function CandidateDetailPage() {
             <div>
               <div className="text-xs text-red-400 font-medium mb-1">Concerns</div>
               <ul className="space-y-1">{screening.concerns.map((s: string, i: number) => (
-                <li key={i} className="text-sm text-gray-400 flex gap-2"><span className="text-red-500">✗</span>{s}</li>
+                <li key={i} className="text-sm text-hire-text-muted flex gap-2"><span className="text-red-500">✗</span>{s}</li>
               ))}</ul>
             </div>
           )}
@@ -103,7 +103,7 @@ export default function CandidateDetailPage() {
       {/* Assessment */}
       {assessment && (
         <Section title="Agent 2 — Assessment">
-          <div className="text-sm text-gray-400">
+          <div className="text-sm text-hire-text-muted">
             {assessment.submitted
               ? `✅ Submitted on ${assessment.submittedAt ? new Date(assessment.submittedAt as any).toLocaleDateString() : 'unknown date'}`
               : `⏳ Awaiting submission — Token: ${assessment.token}`}
@@ -113,9 +113,9 @@ export default function CandidateDetailPage() {
               {(assessment.questions as any[]).map((q: any, i: number) => {
                 const answer = assessment.answers ? (assessment.answers as any[])[i] : null;
                 return (
-                  <div key={i} className="bg-gray-800 rounded-lg p-3">
-                    <div className="text-sm font-medium text-gray-300">Q{i+1}: {q.question}</div>
-                    {answer && <div className="text-sm text-gray-400 mt-1 italic">"{answer.answer}"</div>}
+                  <div key={i} className="bg-hire-surface rounded-lg p-3">
+                    <div className="text-sm font-medium text-hire-text-main">Q{i+1}: {q.question}</div>
+                    {answer && <div className="text-sm text-hire-text-muted mt-1 italic">"{answer.answer}"</div>}
                   </div>
                 );
               })}
@@ -128,13 +128,13 @@ export default function CandidateDetailPage() {
       {evaluation && (
         <Section title="Agent 3 — Evaluation Report">
           <ScoreBar label="Total Evaluation Score" score={evaluation.totalScore} />
-          <p className="text-sm text-gray-400 mt-2">{evaluation.summary}</p>
+          <p className="text-sm text-hire-text-muted mt-2">{evaluation.summary}</p>
           <div className="grid md:grid-cols-2 gap-4 mt-2">
             {evaluation.strengths?.length > 0 && (
               <div>
                 <div className="text-xs text-green-400 font-medium mb-2">Strengths</div>
                 <ul className="space-y-1">{evaluation.strengths.map((s, i) => (
-                  <li key={i} className="text-sm text-gray-400 flex gap-2"><span className="text-green-500">✓</span>{s}</li>
+                  <li key={i} className="text-sm text-hire-text-muted flex gap-2"><span className="text-green-500">✓</span>{s}</li>
                 ))}</ul>
               </div>
             )}
@@ -142,7 +142,7 @@ export default function CandidateDetailPage() {
               <div>
                 <div className="text-xs text-red-400 font-medium mb-2">Areas to Improve</div>
                 <ul className="space-y-1">{evaluation.weaknesses.map((s, i) => (
-                  <li key={i} className="text-sm text-gray-400 flex gap-2"><span className="text-red-500">△</span>{s}</li>
+                  <li key={i} className="text-sm text-hire-text-muted flex gap-2"><span className="text-red-500">△</span>{s}</li>
                 ))}</ul>
               </div>
             )}
@@ -153,7 +153,7 @@ export default function CandidateDetailPage() {
       {/* Interview */}
       {candidate.interviewToken && (
         <Section title="Agent 4 — Interview">
-          <div className="text-sm text-gray-400">Interview link generated.</div>
+          <div className="text-sm text-hire-text-muted">Interview link generated.</div>
           {candidate.interviewScore != null && (
             <ScoreBar label="Interview Score" score={candidate.interviewScore} />
           )}

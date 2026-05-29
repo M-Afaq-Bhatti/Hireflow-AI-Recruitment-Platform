@@ -41,7 +41,7 @@ export default function ApplyPage() {
   if (message && !job) return (
     <>
       <PublicNavbar />
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-hire-bg flex items-center justify-center">
         <div className="text-red-400 text-center">{message}</div>
       </div>
     </>
@@ -50,12 +50,12 @@ export default function ApplyPage() {
   if (status === 'success') return (
     <>
       <PublicNavbar />
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-hire-bg flex items-center justify-center px-4">
         <div className="max-w-md text-center space-y-4">
           <div className="text-6xl">🎉</div>
-          <h1 className="text-2xl font-bold text-white">Application Submitted!</h1>
-          <p className="text-gray-400">{message}</p>
-          <div className="card text-left text-sm text-gray-400 mt-4 space-y-2">
+          <h1 className="text-2xl font-bold text-hire-text-main">Application Submitted!</h1>
+          <p className="text-hire-text-muted">{message}</p>
+          <div className="card text-left text-sm text-hire-text-muted mt-4 space-y-2">
             <p>What happens next:</p>
             <p>1. 🤖 Our AI will screen your resume within minutes</p>
             <p>2. 📧 If qualified, you'll receive an assessment by email</p>
@@ -70,13 +70,13 @@ export default function ApplyPage() {
   return (
     <>
       <PublicNavbar />
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4 py-12">
+      <div className="min-h-screen bg-hire-bg flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-lg space-y-6">
         {job && (
           <div className="text-center">
-            <div className="text-indigo-400 text-sm font-medium mb-1">You're applying for</div>
-            <h1 className="text-2xl font-bold text-white">{job.title}</h1>
-            <div className="flex gap-3 justify-center text-sm text-gray-400 mt-1">
+            <div className="text-hire-primary text-sm font-medium mb-1">You're applying for</div>
+            <h1 className="text-2xl font-bold text-hire-text-main">{job.title}</h1>
+            <div className="flex gap-3 justify-center text-sm text-hire-text-muted mt-1">
               {job.department && <span>📁 {job.department}</span>}
               {job.location && <span>📍 {job.location}</span>}
             </div>
@@ -102,18 +102,18 @@ export default function ApplyPage() {
           </div>
           <div>
             <label className="label">Resume (PDF only, max 5MB) *</label>
-            <div className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors ${resume ? 'border-indigo-500 bg-indigo-900/20' : 'border-gray-700 hover:border-gray-500'}`}
+            <div className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors ${resume ? 'border-hire-primary bg-hire-primary/20' : 'border-hire-border hover:border-hire-surface-hover'}`}
               onClick={() => document.getElementById('resume-input')?.click()}>
               <input id="resume-input" type="file" accept=".pdf" className="hidden"
                 onChange={e => setResume(e.target.files?.[0] || null)} />
               {resume
-                ? <div className="text-indigo-300 text-sm">📄 {resume.name} ({(resume.size / 1024 / 1024).toFixed(1)} MB)</div>
-                : <div className="text-gray-500 text-sm">Click to upload your resume PDF</div>
+                ? <div className="text-hire-primary text-sm">📄 {resume.name} ({(resume.size / 1024 / 1024).toFixed(1)} MB)</div>
+                : <div className="text-hire-text-muted text-sm">Click to upload your resume PDF</div>
               }
             </div>
           </div>
 
-          <div className="bg-gray-800/50 rounded-lg p-3 text-xs text-gray-500 space-y-1">
+          <div className="bg-hire-surface/50 rounded-lg p-3 text-xs text-hire-text-muted space-y-1">
             <p>⚡ Applications are processed automatically by AI within minutes</p>
             <p>🔒 Your resume is encrypted and stored securely</p>
           </div>
