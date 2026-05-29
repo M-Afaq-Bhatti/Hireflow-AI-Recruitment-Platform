@@ -1,0 +1,109 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id          String      @id @default(cuid())
+  name        String
+  email       String      @unique
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  users       User[]
+  jobs        Job[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(HR)
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Job {
+  id           String      @id @default(cuid())
+  title        String
+  description  String
+  requirements String
+  department   String?
+  location     String?
+  salaryMin    Int?
+  salaryMax    Int?
+  isActive     Boolean     @default(true)
+  tenantId     String
+  tenant       Tenant      @relation(fields: [tenantId], references: [id])
+  candidates   Candidate[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Candidate {
+  id              String       @id @default(cuid())
+  name            String
+  email           String
+  phone           String?
+  resumePath      String
+  resumeEncrypted Boolean      @default(true)
+  stage           Stage        @default(APPLIED)
+  screeningScore  Float?
+  screeningNotes  String?
+  jobId           String
+  job             Job          @relation(fields: [jobId], references: [id])
+  assessment      Assessment?
+  evaluation      Evaluation?
+  interviewToken  String?
+  interviewNotes  String?
+  interviewScore  Float?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}
+
+model Assessment {
+  id          String    @id @default(cuid())
+  questions   Json
+  token       String    @unique @default(cuid())
+  submitted   Boolean   @default(false)
+  answers     Json?
+  submittedAt DateTime?
+  candidateId String    @unique
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  createdAt   DateTime  @default(now())
+}
+
+model Evaluation {
+  id          String    @id @default(cuid())
+  scores      Json
+  totalScore  Float
+  summary     String
+  strengths   String[]
+  weaknesses  String[]
+  candidateId String    @unique
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  createdAt   DateTime  @default(now())
+}
+
+enum Stage {
+  APPLIED
+  SCREENING
+  SCREENED_OUT
+  ASSESSMENT
+  EVALUATING
+  INTERVIEW
+  HIRED
+  REJECTED
+}
+
+enum Role {
+  ADMIN
+  HR
+}
