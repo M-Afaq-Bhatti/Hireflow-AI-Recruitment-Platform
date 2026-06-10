@@ -50,8 +50,8 @@ router.get('/', requireAuth, async (req, res) => {
     };
     const candidates = await prisma.candidate.findMany({
       where,
-      include: { job: { select: { title: true } }, evaluation: true },
-      orderBy: { createdAt: 'desc' },
+      include: { job: { select: { title: true } }, evaluation: true, interviewReview: true },
+      orderBy: stage === 'FINAL_REVIEW' ? { finalScore: 'desc' } : { createdAt: 'desc' },
     });
     res.json(candidates);
   } catch (err) {
@@ -64,7 +64,7 @@ router.get('/:id', requireAuth, async (req, res) => {
   try {
     const candidate = await prisma.candidate.findFirst({
       where: { id: req.params.id, job: { tenantId: req.user.tenantId } },
-      include: { job: true, assessment: true, evaluation: true },
+      include: { job: true, assessment: true, evaluation: true, interviewReview: true },
     });
     if (!candidate) return res.status(404).json({ error: 'Candidate not found' });
     
@@ -87,6 +87,56 @@ router.patch('/:id/stage', requireAuth, async (req, res) => {
     });
     if (!candidate) return res.status(404).json({ error: 'Candidate not found' });
     const updated = await prisma.candidate.update({ where: { id: req.params.id }, data: { stage } });
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// HR Decision - Hire or Reject
+router.post('/:id/hr-decision', requireAuth, async (req, res) => {
+  try {
+    const { decision } = req.body; // 'HIRED' or 'REJECTED'
+    
+    if (!['HIRED', 'REJECTED'].includes(decision)) {
+      return res.status(400).json({ error: 'Invalid decision. Must be HIRED or REJECTED' });
+    }
+
+    const candidate = await prisma.candidate.findFirst({
+      where: { id: req.params.id, job: { tenantId: req.user.tenantId } },
+      include: { job: true },
+    });
+    if (!candidate) return res.status(404).json({ error: 'Candidate not found' });
+
+    // Update candidate
+    const updated = await prisma.candidate.update({
+      where: { id: req.params.id },
+      data: {
+        stage: decision,
+        hrDecision: decision,
+      },
+    });
+
+    // Send email
+    const { sendHireEmail, sendRejectEmail } = require('../services/email.service');
+    try {
+      if (decision === 'HIRED') {
+        await sendHireEmail(candidate.email, candidate.name, candidate.job.title, candidate.job.salaryMin, candidate.job.salaryMax);
+      } else {
+        await sendRejectEmail(candidate.email, candidate.name, candidate.job.title);
+      }
+    } catch (err) {
+      console.error('Email send error:', err.message);
+    }
+
+    // Emit socket update
+    const { emitCandidateUpdate } = require('../sockets/dashboard.socket');
+    emitCandidateUpdate(candidate.job.tenantId, {
+      candidateId: req.params.id,
+      stage: decision,
+      hrDecision: decision,
+    });
+
     res.json(updated);
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -40,12 +40,36 @@ router.post('/:token/complete', async (req, res) => {
     const decoded = verifyToken(req.params.token);
     const { notes, score } = req.body;
 
-    await prisma.candidate.update({
+    const candidate = await prisma.candidate.findUnique({
       where: { id: decoded.candidateId },
-      data: { stage: 'HIRED', interviewScore: score || null },
+      include: { job: true },
     });
 
-    res.json({ message: 'Interview completed' });
+    if (!candidate) return res.status(404).json({ error: 'Candidate not found' });
+
+    // Save interview answers and trigger evaluation
+    await prisma.candidate.update({
+      where: { id: decoded.candidateId },
+      data: { 
+        stage: 'INTERVIEW_EVALUATING',
+        interviewNotes: notes,
+        interviewScore: score || null,
+      },
+    });
+
+    // Publish to Kafka for Agent 5 (Interview Evaluator)
+    const { publish } = require('../kafka/producer');
+    const TOPICS = require('../kafka/topics');
+    await publish(TOPICS.INTERVIEW_COMPLETED, { candidateId: decoded.candidateId });
+
+    // Emit socket update
+    const { emitCandidateUpdate } = require('../sockets/dashboard.socket');
+    emitCandidateUpdate(candidate.job.tenantId, { 
+      candidateId: decoded.candidateId, 
+      stage: 'INTERVIEW_EVALUATING' 
+    });
+
+    res.json({ message: 'Interview completed successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

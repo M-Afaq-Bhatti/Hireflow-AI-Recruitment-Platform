@@ -45,6 +45,33 @@ Return ONLY valid JSON in this exact format:
   ]
 }
 Generate exactly 4 behavioral and situational questions relevant to the role.`,
+
+  INTERVIEW_EVALUATOR: `You are an expert technical interviewer and behavioral analyst. Evaluate the candidate's interview responses.
+Return ONLY valid JSON in this exact format:
+{
+  "score": <number 0-100>,
+  "summary": "<overall assessment in 2-3 sentences>",
+  "strengths": [<array of strings showing 3-4 key strengths>],
+  "weaknesses": [<array of strings showing 2-3 areas for improvement>],
+  "communicationScore": <0-100>,
+  "technicalScore": <0-100>,
+  "professionalism": <0-100>
+}`,
+
+  FINAL_EVALUATOR: `You are a senior recruitment strategist. Generate a comprehensive final score based on all evaluation stages.
+Return ONLY valid JSON in this exact format:
+{
+  "finalScore": <number 0-100>,
+  "breakdown": {
+    "resume": <screening score from 0-100>,
+    "skillsAssessment": <assessment score from 0-100>,
+    "interview": <interview score from 0-100>
+  },
+  "recommendation": "<STRONG_HIRE, HIRE, or CONSIDER>",
+  "summary": "<2-3 sentence professional summary>",
+  "keyStrengths": [<array of 3-4 key strengths>],
+  "developmentAreas": [<array of 2-3 areas for growth>]
+}`,
 };
 
 module.exports = PROMPTS;

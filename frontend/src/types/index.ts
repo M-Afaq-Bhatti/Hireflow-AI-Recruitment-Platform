@@ -1,4 +1,4 @@
-export type Stage = 'APPLIED' | 'SCREENING' | 'SCREENED_OUT' | 'ASSESSMENT' | 'EVALUATING' | 'INTERVIEW' | 'HIRED' | 'REJECTED';
+export type Stage = 'APPLIED' | 'SCREENING' | 'SCREENED_OUT' | 'ASSESSMENT' | 'EVALUATING' | 'INTERVIEW' | 'INTERVIEW_EVALUATING' | 'FINAL_REVIEW' | 'HIRED' | 'REJECTED';
 
 export interface Tenant {
   id: string;
@@ -37,12 +37,16 @@ export interface Candidate {
   screeningScore?: number;
   screeningNotes?: string;
   screeningData?: any;
+  interviewScore?: number;
+  finalScore?: number;
+  finalRanking?: number;
+  hrDecision?: 'PENDING' | 'HIRED' | 'REJECTED';
   jobId: string;
   job?: Job;
   assessment?: Assessment;
   evaluation?: Evaluation;
+  interviewReview?: InterviewReview;
   interviewToken?: string;
-  interviewScore?: number;
   createdAt: string;
 }
 
@@ -73,6 +77,18 @@ export interface Evaluation {
   summary: string;
   strengths: string[];
   weaknesses: string[];
+}
+
+export interface InterviewReview {
+  id: string;
+  score: number;
+  summary: string;
+  strengths: string[];
+  weaknesses: string[];
+  answers: string[];
+  communicationScore?: number;
+  technicalScore?: number;
+  professionalism?: number;
 }
 
 export interface AuthState {

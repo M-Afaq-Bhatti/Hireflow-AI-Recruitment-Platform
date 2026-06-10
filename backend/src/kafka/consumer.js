@@ -4,6 +4,7 @@ const agent1 = require('../agents/agent1.screener');
 const agent2 = require('../agents/agent2.assessor');
 const agent3 = require('../agents/agent3.evaluator');
 const agent4 = require('../agents/agent4.interviewer');
+const agent5 = require('../agents/agent5.evaluator_final');
 
 const kafka = new Kafka({
   clientId: 'hireflow-consumer',
@@ -38,6 +39,7 @@ const initKafka = async () => {
     TOPICS.SCREENING_PASSED,
     TOPICS.ASSESSMENT_SUBMITTED,
     TOPICS.INTERVIEW_INVITED,
+    TOPICS.INTERVIEW_COMPLETED,
   ], fromBeginning: false });
 
   await consumer.run({
@@ -58,6 +60,9 @@ const initKafka = async () => {
             break;
           case TOPICS.INTERVIEW_INVITED:
             await agent4.run(data);
+            break;
+          case TOPICS.INTERVIEW_COMPLETED:
+            await agent5.run(data);
             break;
         }
       } catch (err) {

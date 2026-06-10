@@ -64,6 +64,10 @@ model Candidate {
   interviewToken  String?
   interviewNotes  String?
   interviewScore  Float?
+  finalScore      Float?
+  finalRanking    Int?
+  hrDecision      HRDecision   @default(PENDING)
+  interviewReview InterviewReview?
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
 }
@@ -92,6 +96,18 @@ model Evaluation {
   createdAt   DateTime  @default(now())
 }
 
+model InterviewReview {
+  id          String    @id @default(cuid())
+  score       Float
+  summary     String
+  strengths   String[]
+  weaknesses  String[]
+  answers     Json
+  candidateId String    @unique
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  createdAt   DateTime  @default(now())
+}
+
 enum Stage {
   APPLIED
   SCREENING
@@ -99,6 +115,14 @@ enum Stage {
   ASSESSMENT
   EVALUATING
   INTERVIEW
+  INTERVIEW_EVALUATING
+  FINAL_REVIEW
+  HIRED
+  REJECTED
+}
+
+enum HRDecision {
+  PENDING
   HIRED
   REJECTED
 }

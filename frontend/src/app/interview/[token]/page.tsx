@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { getSocket } from '@/lib/socket';
 
@@ -8,6 +8,7 @@ type InterviewState = 'loading' | 'ready' | 'connecting' | 'live' | 'question' |
 
 export default function InterviewRoomPage() {
   const { token } = useParams<{ token: string }>();
+  const router = useRouter();
   const [data, setData] = useState<any>(null);
   const [state, setState] = useState<InterviewState>('loading');
   const [error, setError] = useState('');
@@ -17,6 +18,7 @@ export default function InterviewRoomPage() {
   const [speaking, setSpeaking] = useState(false);
   const [micActive, setMicActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const recognitionRef = useRef<any>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
@@ -88,6 +90,22 @@ export default function InterviewRoomPage() {
     };
   });
 
+  const handleSubmitInterview = async () => {
+    setIsSubmitting(true);
+    try {
+      await api.post(`/interviews/${token}/complete`, { 
+        notes: JSON.stringify(allAnswers), 
+        score: null 
+      });
+      // Stay on completed page - don't redirect
+    } catch (e) {
+      console.error('Submission error:', e);
+      alert('Error submitting interview. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const runInterview = async () => {
     setState('connecting');
     await speak(`Hello ${data.candidateName}! Welcome to your interview for ${data.jobTitle}. I'm your AI interviewer. We have ${data.questions.length} questions. Please speak clearly after each question. Let's begin.`);
@@ -111,12 +129,7 @@ export default function InterviewRoomPage() {
     }
 
     setState('completed');
-    await speak('Thank you for completing the interview. Your responses have been recorded. You will hear back from us soon. Goodbye!');
-
-    // Save completion
-    try {
-      await api.post(`/interviews/${token}/complete`, { notes: JSON.stringify(answers), score: null });
-    } catch (e) { /* non-fatal */ }
+    await speak('Thank you for completing the interview. Your responses have been recorded. Please submit your interview by clicking the button below.');
   };
 
   // UI states
@@ -141,7 +154,7 @@ export default function InterviewRoomPage() {
       <div className="max-w-lg text-center space-y-6">
         <div className="text-6xl">🎤</div>
         <h1 className="text-2xl font-bold text-hire-text-main">Interview Complete!</h1>
-        <p className="text-hire-text-muted">Thank you {data?.candidateName}. Your responses have been recorded and will be reviewed.</p>
+        <p className="text-hire-text-muted">Thank you {data?.candidateName}. Your responses have been recorded and will be reviewed by our team.</p>
         <div className="card text-left space-y-3">
           <p className="text-sm font-semibold text-hire-text-main">Your Answers Summary</p>
           {data?.questions?.map((q: any, i: number) => (
@@ -151,6 +164,14 @@ export default function InterviewRoomPage() {
             </div>
           ))}
         </div>
+        <button 
+          onClick={handleSubmitInterview}
+          disabled={isSubmitting}
+          className={`btn-primary w-full py-3 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          {isSubmitting ? '⏳ Submitting...' : '✅ Submit Interview'}
+        </button>
+        <p className="text-xs text-hire-text-muted">Click the button above to complete your submission</p>
       </div>
     </div>
   );

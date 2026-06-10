@@ -8,6 +8,7 @@ const STAGE_COLOR: Record<string, string> = {
   APPLIED: 'bg-gray-700 text-gray-200', SCREENING: 'bg-blue-900 text-blue-200',
   SCREENED_OUT: 'bg-red-900 text-red-200', ASSESSMENT: 'bg-yellow-900 text-yellow-200',
   EVALUATING: 'bg-orange-900 text-orange-200', INTERVIEW: 'bg-purple-900 text-purple-200',
+  INTERVIEW_EVALUATING: 'bg-indigo-900 text-indigo-200', FINAL_REVIEW: 'bg-cyan-900 text-cyan-200',
   HIRED: 'bg-green-900 text-green-200', REJECTED: 'bg-red-900 text-red-200',
 };
 
@@ -22,7 +23,7 @@ export default function CandidatesPage() {
 
   const filtered = filter ? candidates.filter(c => c.stage === filter) : candidates;
 
-  const stages = ['APPLIED','SCREENING','SCREENED_OUT','ASSESSMENT','EVALUATING','INTERVIEW','HIRED','REJECTED'];
+  const stages = ['APPLIED','SCREENING','SCREENED_OUT','ASSESSMENT','EVALUATING','INTERVIEW','INTERVIEW_EVALUATING','FINAL_REVIEW','HIRED','REJECTED'];
 
   return (
     <div className="p-6 space-y-6">

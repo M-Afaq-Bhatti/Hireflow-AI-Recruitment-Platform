@@ -34,6 +34,7 @@ const STAGE_COLOR: Record<string, string> = {
   APPLIED: 'bg-gray-700 text-gray-200', SCREENING: 'bg-blue-900 text-blue-200',
   SCREENED_OUT: 'bg-red-900 text-red-200', ASSESSMENT: 'bg-yellow-900 text-yellow-200',
   EVALUATING: 'bg-orange-900 text-orange-200', INTERVIEW: 'bg-purple-900 text-purple-200',
+  INTERVIEW_EVALUATING: 'bg-indigo-900 text-indigo-200', FINAL_REVIEW: 'bg-cyan-900 text-cyan-200',
   HIRED: 'bg-green-900 text-green-200', REJECTED: 'bg-red-900 text-red-200',
 };
 
@@ -41,10 +42,25 @@ export default function CandidateDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [candidate, setCandidate] = useState<Candidate | null>(null);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     api.get(`/candidates/${id}`).then(r => setCandidate(r.data)).catch(console.error).finally(() => setLoading(false));
   }, [id]);
+
+  const handleHRDecision = async (decision: 'HIRED' | 'REJECTED') => {
+    if (!candidate) return;
+    setActionLoading(true);
+    try {
+      const result = await api.post(`/candidates/${candidate.id}/hr-decision`, { decision });
+      setCandidate(result.data);
+      alert(`Candidate marked as ${decision}`);
+    } catch (err: any) {
+      alert('Error: ' + (err.response?.data?.error || err.message));
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   if (loading) return <div className="p-6 text-hire-text-muted">Loading…</div>;
   if (!candidate) return <div className="p-6 text-red-400">Candidate not found</div>;
@@ -52,6 +68,7 @@ export default function CandidateDetailPage() {
   const screening = candidate.screeningData;
   const evaluation = candidate.evaluation;
   const assessment = candidate.assessment;
+  const interviewReview = candidate.interviewReview;
 
   return (
     <div className="p-6 space-y-6 max-w-3xl">
@@ -69,6 +86,60 @@ export default function CandidateDetailPage() {
           {candidate.stage.replace('_', ' ')}
         </span>
       </div>
+
+      {/* Final Review Stage with HR Decision */}
+      {candidate.stage === 'FINAL_REVIEW' && candidate.finalScore != null && (
+        <div className="card border-2 border-cyan-500/50 space-y-4">
+          <div className="space-y-2">
+            <h2 className="text-lg font-bold text-hire-text-main">🎯 Final Review — Ready for HR Decision</h2>
+            <ScoreBar label="Final Composite Score" score={candidate.finalScore} />
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <div className="text-xs text-hire-text-muted font-medium mb-1">Score Breakdown</div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between"><span>Resume:</span><span className="font-medium text-hire-text-main">{Math.round(candidate.screeningScore || 0)}/100</span></div>
+                <div className="flex justify-between"><span>Skills Assessment:</span><span className="font-medium text-hire-text-main">{Math.round(evaluation?.totalScore || 0)}/100</span></div>
+                <div className="flex justify-between"><span>Interview:</span><span className="font-medium text-hire-text-main">{Math.round(candidate.interviewScore || 0)}/100</span></div>
+              </div>
+            </div>
+          </div>
+
+          {/* HR Decision Buttons */}
+          {candidate.hrDecision === 'PENDING' && (
+            <div className="border-t border-hire-border pt-4">
+              <p className="text-sm text-hire-text-muted mb-3">Make an HR Decision:</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => handleHRDecision('HIRED')}
+                  disabled={actionLoading}
+                  className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                >
+                  {actionLoading ? '⏳ Processing...' : '✅ Hire Candidate'}
+                </button>
+                <button
+                  onClick={() => handleHRDecision('REJECTED')}
+                  disabled={actionLoading}
+                  className="flex-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                >
+                  {actionLoading ? '⏳ Processing...' : '❌ Reject Candidate'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {candidate.hrDecision && candidate.hrDecision !== 'PENDING' && (
+            <div className={`border-t border-hire-border pt-4 ${candidate.hrDecision === 'HIRED' ? 'bg-green-900/20' : 'bg-red-900/20'} p-3 rounded-lg`}>
+              <p className="text-sm font-medium">
+                {candidate.hrDecision === 'HIRED' 
+                  ? '✅ Candidate has been HIRED and notification email sent' 
+                  : '❌ Candidate has been REJECTED and notification email sent'}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Job */}
       <Section title="Applied For">
@@ -102,7 +173,7 @@ export default function CandidateDetailPage() {
 
       {/* Assessment */}
       {assessment && (
-        <Section title="Agent 2 — Assessment">
+        <Section title="Agent 2 — Skills Assessment">
           <div className="text-sm text-hire-text-muted">
             {assessment.submitted
               ? `✅ Submitted on ${assessment.submittedAt ? new Date(assessment.submittedAt as any).toLocaleDateString() : 'unknown date'}`
@@ -126,7 +197,7 @@ export default function CandidateDetailPage() {
 
       {/* Evaluation */}
       {evaluation && (
-        <Section title="Agent 3 — Evaluation Report">
+        <Section title="Agent 3 — Skills Evaluation">
           <ScoreBar label="Total Evaluation Score" score={evaluation.totalScore} />
           <p className="text-sm text-hire-text-muted mt-2">{evaluation.summary}</p>
           <div className="grid md:grid-cols-2 gap-4 mt-2">
@@ -153,14 +224,56 @@ export default function CandidateDetailPage() {
       {/* Interview */}
       {candidate.interviewToken && (
         <Section title="Agent 4 — Interview">
-          <div className="text-sm text-hire-text-muted">Interview link generated.</div>
+          <div className="text-sm text-hire-text-muted">Interview completed.</div>
           {candidate.interviewScore != null && (
             <ScoreBar label="Interview Score" score={candidate.interviewScore} />
           )}
-          <a href={`/interview/${candidate.interviewToken}`} target="_blank" rel="noopener noreferrer"
-            className="btn-secondary text-sm inline-block mt-2">
-            Open Interview Room →
-          </a>
+        </Section>
+      )}
+
+      {/* Interview Review */}
+      {interviewReview && (
+        <Section title="Agent 5 — Interview Analysis">
+          <ScoreBar label="Interview Score" score={interviewReview.score} />
+          <p className="text-sm text-hire-text-muted mt-2">{interviewReview.summary}</p>
+          <div className="grid md:grid-cols-3 gap-3 mt-2 text-sm">
+            {interviewReview.communicationScore != null && (
+              <div className="bg-hire-surface rounded p-2">
+                <div className="text-xs text-hire-text-muted">Communication</div>
+                <div className="font-bold text-hire-text-main">{Math.round(interviewReview.communicationScore)}/100</div>
+              </div>
+            )}
+            {interviewReview.technicalScore != null && (
+              <div className="bg-hire-surface rounded p-2">
+                <div className="text-xs text-hire-text-muted">Technical</div>
+                <div className="font-bold text-hire-text-main">{Math.round(interviewReview.technicalScore)}/100</div>
+              </div>
+            )}
+            {interviewReview.professionalism != null && (
+              <div className="bg-hire-surface rounded p-2">
+                <div className="text-xs text-hire-text-muted">Professionalism</div>
+                <div className="font-bold text-hire-text-main">{Math.round(interviewReview.professionalism)}/100</div>
+              </div>
+            )}
+          </div>
+          <div className="grid md:grid-cols-2 gap-4 mt-2">
+            {interviewReview.strengths?.length > 0 && (
+              <div>
+                <div className="text-xs text-green-400 font-medium mb-2">Strengths</div>
+                <ul className="space-y-1">{interviewReview.strengths.map((s, i) => (
+                  <li key={i} className="text-sm text-hire-text-muted flex gap-2"><span className="text-green-500">✓</span>{s}</li>
+                ))}</ul>
+              </div>
+            )}
+            {interviewReview.weaknesses?.length > 0 && (
+              <div>
+                <div className="text-xs text-red-400 font-medium mb-2">Areas for Growth</div>
+                <ul className="space-y-1">{interviewReview.weaknesses.map((s, i) => (
+                  <li key={i} className="text-sm text-hire-text-muted flex gap-2"><span className="text-red-500">△</span>{s}</li>
+                ))}</ul>
+              </div>
+            )}
+          </div>
         </Section>
       )}
     </div>
