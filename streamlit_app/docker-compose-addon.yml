@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # ... existing services ...
+  
+  streamlit:
+    build:
+      context: ./streamlit_app
+      dockerfile: Dockerfile
+    container_name: hireflow-streamlit
+    ports:
+      - "8501:8501"
+    environment:
+      - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_SERVER_PORT=8501
+      - API_URL=http://backend:5000/api
+    volumes:
+      - ./streamlit_app:/app
+    depends_on:
+      - backend
+    networks:
+      - hireflow-network
+    command: streamlit run app.py
+
+networks:
+  hireflow-network:
+    driver: bridge
