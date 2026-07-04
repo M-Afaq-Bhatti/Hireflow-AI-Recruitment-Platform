@@ -17,13 +17,13 @@
 <br/>
 
 > **HireFlow** compresses a two-week hiring process into a fully autonomous **3-minute AI pipeline.**
-> Four specialized agents screen resumes, generate assessments, evaluate answers, and conduct live voice interviews — without a single human click.
+> Five specialized agents screen resumes, generate assessments, evaluate answers, conduct live voice interviews, and produce a final hiring recommendation — without a single human click.
 
 <br/>
 
 ```
-  Resume Submitted  ──►  Agent 1 Screens  ──►  Agent 2 Tests  ──►  Agent 3 Grades  ──►  Agent 4 Interviews  ──►  HR Decides
-       📄                     🤖                    📝                   📊                     🎤                    ✅
+  Resume Submitted  ──►  Agent 1 Screens  ──►  Agent 2 Tests  ──►  Agent 3 Grades  ──►  Agent 4 Interviews  ──►  Agent 5 Finalizes  ──►  HR Decides
+       📄                     🤖                    📝                   📊                     🎤                         🏁                    ✅
 ```
 
 </div>
@@ -97,9 +97,9 @@ HireFlow is a **distributed multi-service system**. Each layer is independently 
 ┌───────────────────────────────────────────▼───────────────────────┐
 │                     AI AGENT LAYER                                 │
 │                                                                    │
-│  Agent 1         Agent 2         Agent 3         Agent 4          │
-│  Screener   ──►  Assessor   ──►  Evaluator  ──►  Interviewer      │
-│  (Groq AI)       (Groq AI)       (Groq AI)       (WebRTC)         │
+│  Agent 1         Agent 2         Agent 3         Agent 4         Agent 5     │
+│  Screener   ──►  Assessor   ──►  Evaluator  ──►  Interviewer ──► Finalizer │
+│  (Groq AI)       (Groq AI)       (Groq AI)       (WebRTC)       (Groq AI)   │
 └───────────────────────────────────────────────────────────────────┘
 ```
 
@@ -154,6 +154,13 @@ Each agent is an independent Node.js module that:
                         │     • Signed JWT room token     │
                         │     • Redis TTL (24h)           │
                         │     • Web Speech API interview  │
+                        │             │                   │
+                        │  interview-completed ───────────►
+                        │                                 │
+                        │  Agent 5: Final Evaluator       │
+                        │     • Evaluates interview notes │
+                        │     • Generates aggregate score │
+                        │     • Recommends hire / reject  │
                         └─────────────────────────────────┘
 ```
 
@@ -246,6 +253,34 @@ Each agent is an independent Node.js module that:
 
 ---
 
+### Agent 5 — Final Interview Evaluator
+
+**Input:** Candidate record, assessment results, interview notes, and job context
+
+**What it does:**
+1. Reads the candidate's interview transcript and prior stage scores
+2. Calls Groq to evaluate interview performance and summarize strengths/weaknesses
+3. Computes a weighted final score across screening, assessment, and interview
+4. Calls Groq again to generate a final hiring recommendation
+5. Saves the interview review and updates candidate stage to `FINAL_REVIEW`
+6. Emits a live socket update with `finalScore` and `recommendation`
+
+**Output schema:**
+```json
+{
+  "score": 78,
+  "summary": "Strong communicator with solid role fit; needs deeper cloud experience.",
+  "strengths": ["Clear storytelling", "Problem solving"],
+  "weaknesses": ["Cloud architecture depth"],
+  "finalScore": 75,
+  "recommendation": "HIRE"
+}
+```
+
+**Decision gate:** `finalScore ≥ 65` → `HIRE` / `STRONG_HIRE`. Otherwise → `CONSIDER` or `REJECTED` depending on the final evaluation.
+
+---
+
 ## 🛠 Tech Stack Deep Dive
 
 ### Frontend
@@ -282,16 +317,16 @@ Each agent is an independent Node.js module that:
 |---|---|
 | **PostgreSQL 16** | Relational data — tenants, jobs, candidates, evals |
 | **Redis 7** | Sub-ms cache — live stages, room tokens, job configs |
-| **Apache Kafka 7.5** | Async message bus — decouples all 4 agents |
+| **Apache Kafka 7.5** | Async message bus — decouples all 5 agents |
 | **Zookeeper** | Kafka cluster coordination |
-| **Docker Compose** | Local orchestration of all 4 services |
+| **Docker Compose** | Local orchestration of all 5 services |
 
 ### AI
 
 | Technology | Role |
 |---|---|
 | **Groq Cloud API** | LLM inference provider |
-| **LLaMA 3 70B** | Model powering all 4 agents |
+| **LLaMA 3 70B** | Model powering all 5 agents |
 | **JSON mode** | Forces structured output from every agent |
 | **System prompts** | Role-specific persona per agent (recruiter / interviewer / evaluator) |
 
@@ -320,6 +355,7 @@ hireflow/
 │   │   │   ├── 📄 agent2.assessor.js      # Assessment generation + email
 │   │   │   ├── 📄 agent3.evaluator.js     # Answer grading + report
 │   │   │   ├── 📄 agent4.interviewer.js   # Token generation + interview setup
+│   │   │   ├── 📄 agent5.evaluator_final.js# Final interview evaluation + recommendation
 │   │   │   └── 📄 prompts.js              # All LLM prompt templates
 │   │   │
 │   │   ├── 📂 kafka/              # Message bus layer
@@ -707,6 +743,11 @@ FRONTEND_URL="http://localhost:3000"
    │    Signed JWT room token created   │
    │    Interview email sent            │
    │    Dashboard: INTERVIEW            │
+   │             │                      │
+   │  Agent 5 ─ Final Interview Evaluator│  ~10 seconds
+   │    Review interview + final score  │
+   │    Recommendation generated        │
+   │    Dashboard: FINAL_REVIEW         │
    └────────────────────────────────────┘
         │
 5. Candidate opens interview link    /interview/[token]
